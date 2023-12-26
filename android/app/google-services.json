@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "921942226570",
+    "project_id": "laporbookdb-306c0",
+    "storage_bucket": "laporbookdb-306c0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921942226570:android:d6d3c0d1aaa4902b1c5f73",
+        "android_client_info": {
+          "package_name": "com.example.flutter_lapor_book"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVE90KStNIiv7ti8VPcHlfVUeBM_sl91M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921942226570:android:a506247ea2848dc51c5f73",
+        "android_client_info": {
+          "package_name": "com.example.flutter_nyoba_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVE90KStNIiv7ti8VPcHlfVUeBM_sl91M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
