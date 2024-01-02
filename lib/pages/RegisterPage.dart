@@ -46,6 +46,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'nama': nama,
         'email': email,
         'noHP': noHP,
+        'docId': docId,
         'role': 'user',
       });
 

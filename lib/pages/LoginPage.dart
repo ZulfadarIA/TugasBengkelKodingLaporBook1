@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lapor_book/component/validator.dart';
 import '../component/input_widget.dart';
 import '../component/styles.dart';
-import '../component/validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,25 +13,6 @@ class LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   final _auth = FirebaseAuth.instance;
-
-  @override
-  void initState() {
-    super.initState();
-
-    User? user = _auth.currentUser;
-
-    if (user != null) {
-      Future.delayed(Duration.zero, () {
-        // buat dashboard terlebih dahulu, lalu hapus komen line code dibawah ini
-        Navigator.pushReplacementNamed(context, '/dashboard');
-      });
-    } else {
-      Future.delayed(Duration.zero, () {
-        Navigator.pushReplacementNamed(context, '/login');
-      });
-    }
-  }
-
   bool _isLoading = false;
 
   String? email;
@@ -85,7 +66,6 @@ class LoginPageState extends State<LoginPage> {
                           key: _formKey,
                           child: Column(
                             children: [
-                              // tempat inputan nanti
                               InputLayout(
                                   'Email',
                                   TextFormField(
