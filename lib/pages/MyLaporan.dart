@@ -1,8 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_lapor_book/component/List_item.dart';
 import 'package:flutter_lapor_book/model/akun.dart';
+import 'package:flutter_lapor_book/model/laporan.dart';
 
 class MyLaporan extends StatefulWidget {
-  final Akun? akun;
+  final Akun akun;
   const MyLaporan({super.key, required this.akun});
 
   @override
@@ -10,10 +13,58 @@ class MyLaporan extends StatefulWidget {
 }
 
 class _MyLaporanState extends State<MyLaporan> {
+  final _db = FirebaseFirestore.instance;
+
+  List<Laporan> listLaporan = [];
+
+  void getLaporan() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
+          .collection('laporan')
+          .where('uid', isEqualTo: widget.akun.uid)
+          .get();
+      setState(() {
+        listLaporan.clear();
+        for (var documents in querySnapshot.docs) {
+          listLaporan.add(Laporan(
+            uid: documents.data()['uid'],
+            docId: documents.data()['docId'],
+            judul: documents.data()['judul'],
+            instansi: documents.data()['instansi'],
+            nama: documents.data()['nama'],
+            status: documents.data()['status'],
+            tanggal: documents.data()['tanggal'].toDate(),
+            maps: documents.data()['maps'],
+            deskripsi: documents.data()['deskripsi'],
+            gambar: documents.data()['gambar'],
+          ));
+        }
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('My Laporan'),
-    );
+    getLaporan();
+    return SafeArea(
+        child: Container(
+      margin: EdgeInsets.all(20),
+      child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 1 / 1.233),
+          itemCount: listLaporan.length,
+          itemBuilder: (context, index) {
+            return ListItem(
+              akun: widget.akun,
+              laporan: listLaporan[index],
+              isLaporanku: true,
+            );
+          }),
+    ));
   }
 }

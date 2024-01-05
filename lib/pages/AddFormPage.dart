@@ -80,22 +80,23 @@ class _AddFormPageState extends State<AddFormPage> {
   }
 
   Future<Position> getCurrentLocation() async {
-    bool isServiceAnabled = await Geolocator.isLocationServiceEnabled();
-    if (isServiceAnabled) {
+    bool isServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!isServiceEnabled) {
       return Future.error('Location services are disabled.');
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
+
       if (permission == LocationPermission.denied) {
-        return Future.error('Location permission are dennied.');
+        return Future.error('Location permissions are denied');
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
       return Future.error(
-          'Location permission are permantly denied, we cannot request permission.');
+          'Location permissions are permantly denied, we cannot request permissions.');
     }
 
     return await Geolocator.getCurrentPosition();
@@ -107,13 +108,13 @@ class _AddFormPageState extends State<AddFormPage> {
     String uniqueFilename = DateTime.now().millisecondsSinceEpoch.toString();
 
     try {
-      Reference dirupload =
+      Reference dirUpload =
           _storage.ref().child('upload/${_auth.currentUser!.uid}');
-      Reference storeDir = dirupload.child(uniqueFilename);
+      Reference storedDir = dirUpload.child(uniqueFilename);
 
-      await storeDir.putFile(File(file!.path));
+      await storedDir.putFile(File(file!.path));
 
-      return await storeDir.getDownloadURL();
+      return await storedDir.getDownloadURL();
     } catch (e) {
       return '';
     }
@@ -126,15 +127,16 @@ class _AddFormPageState extends State<AddFormPage> {
     try {
       CollectionReference laporanCollection = _firestore.collection('laporan');
 
+      // Convert DateTime to Firestore Timestamp
       Timestamp timestamp = Timestamp.fromDate(DateTime.now());
 
       String url = await uploadImage();
 
-      String currentLoaction = await getCurrentLocation().then((value) {
-        return '${value.latitude}, ${value.longitude}';
+      String currentLocation = await getCurrentLocation().then((value) {
+        return '${value.latitude},${value.longitude}';
       });
 
-      String maps = 'https://www.google.com/maps/place/$currentLoaction';
+      String maps = 'https://www.google.com/maps/place/$currentLocation';
       final id = laporanCollection.doc().id;
 
       await laporanCollection.doc(id).set({
@@ -145,7 +147,7 @@ class _AddFormPageState extends State<AddFormPage> {
         'deskripsi': deskripsi,
         'gambar': url,
         'nama': akun.nama,
-        'status': 'Posted',
+        'status': 'Posted', // posted, process, done
         'tanggal': timestamp,
         'maps': maps,
       }).catchError((e) {
@@ -153,9 +155,7 @@ class _AddFormPageState extends State<AddFormPage> {
       });
       Navigator.popAndPushNamed(context, '/dashboard');
     } catch (e) {
-      final snackbar = SnackBar(
-        content: Text(e.toString()),
-      );
+      final snackbar = SnackBar(content: Text(e.toString()));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
     } finally {
       setState(() {
@@ -190,12 +190,12 @@ class _AddFormPageState extends State<AddFormPage> {
                       InputLayout(
                           'Judul Laporan',
                           TextFormField(
-                            onChanged: (String value) => setState(() {
-                              judul = value;
-                            }),
-                            validator: notEmptyValidator,
-                            decoration: customInputDecoration("Judul Laporan"),
-                          )),
+                              onChanged: (String value) => setState(() {
+                                    judul = value;
+                                  }),
+                              validator: notEmptyValidator,
+                              decoration:
+                                  customInputDecoration("Judul laporan"))),
                       Container(
                         margin: EdgeInsets.symmetric(vertical: 20),
                         child: imagePreview(),
