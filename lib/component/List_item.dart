@@ -22,6 +22,8 @@ class ListItem extends StatefulWidget {
 }
 
 class _ListItemState extends State<ListItem> {
+  int like = 0;
+
   final _db = FirebaseFirestore.instance;
   final _storage = FirebaseStorage.instance;
 
@@ -36,6 +38,23 @@ class _ListItemState extends State<ListItem> {
       await laporanCollection.doc(widget.laporan.docId).delete();
     } catch (e) {
       print(e);
+    }
+  }
+
+  void countingLike(String laporanId) async {
+    debugPrint("count like");
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _db
+          .collection("like")
+          .where('laporan', isEqualTo: laporanId)
+          .get();
+
+      setState(() {
+        like = querySnapshot.docs.length;
+      });
+    } catch (e) {
+      debugPrint("$e");
+      rethrow;
     }
   }
 
@@ -127,6 +146,23 @@ class _ListItemState extends State<ListItem> {
                 ),
                 Expanded(
                   child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: const Border.symmetric(
+                            vertical: BorderSide(width: 1))),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '$like Like',
+                      style: headerStyle(
+                        level: 5,
+                        dark: true,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
                     alignment: Alignment.center,
                     padding: EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
@@ -135,7 +171,7 @@ class _ListItemState extends State<ListItem> {
                             BorderRadius.only(bottomRight: Radius.circular(8))),
                     child: Text(
                       DateFormat('dd/MM/yyyy').format(widget.laporan.tanggal),
-                      style: headerStyle(level: 5, dark: false),
+                      style: headerStyle(level: 6, dark: false),
                     ),
                   ),
                 ),
